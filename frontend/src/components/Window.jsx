@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Rnd } from "react-rnd";
-import { XMarkIcon, ArrowsPointingOutIcon, ArrowsPointingInIcon} from "@heroicons/react/24/solid";
+import { XMarkIcon, ArrowsPointingOutIcon, ArrowsPointingInIcon } from "@heroicons/react/24/solid";
+
 const Window = ({ title, content, x, y, onClose }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [size, setSize] = useState({ width: 500, height: 400 });
@@ -10,7 +11,7 @@ const Window = ({ title, content, x, y, onClose }) => {
 
   const handleFullScreen = () => {
     const topBarHeight = 31; // Adjust this to match your top bar height
-  
+
     if (isFullScreen) {
       // Restore to original position and size
       setPosition(lastPosition);
@@ -22,11 +23,10 @@ const Window = ({ title, content, x, y, onClose }) => {
       setPosition({ x: 0, y: topBarHeight });
       setSize({ width: window.innerWidth, height: window.innerHeight - topBarHeight });
     }
-  
+
     // Toggle the fullscreen state
     setIsFullScreen(!isFullScreen);
   };
-  
 
   const handleMediumSize = () => {
     if (isFullScreen) {
@@ -71,7 +71,7 @@ const Window = ({ title, content, x, y, onClose }) => {
               onClick={handleFullScreen}
               className="text-yellow-500 hover:text-yellow-700"
             >
-               <ArrowsPointingOutIcon className="w-5 h-5" />
+              <ArrowsPointingOutIcon className="w-5 h-5" />
             </button>
             <button
               onClick={handleMediumSize}

@@ -7,18 +7,21 @@ import AboutMe from './AboutMe';
 import ubuntuLogo from "../assets/ubuntu-logo.png"
 import Project from './Project'
 import aboutMeIcon from "../assets/duc-portrait.png"
+import Chat from "./Chat/Chat"
 
 
 const Desktop = () => {
     const [positions, setPositions] = useState([
-        { name: "About me", x: 0, y: 60 , imgSrc: aboutMeIcon},
-        { name: "Projects", x: 150, y: 60 ,imgSrc: ""} // Adjusted x position to avoid overlap
+        { name: "About me", x: 0, y: 40 , imgSrc: aboutMeIcon},
+        { name: "Projects", x: 150, y: 40 ,imgSrc: ""}, // Adjusted x position to avoid overlap
+        {name: "Chat", x:0, y: 200, imgSrc: ""}
     ]);
     const [openWindows, setOpenWindows] = useState([]);
 
     const windowContent = {
         "About me": <AboutMe />,
         "Projects": <Project/>,
+        "Chat": <Chat/>
     };
 
     const updatePosition = (name, x, y) => {
