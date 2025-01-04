@@ -24,6 +24,9 @@ if (ENVIRONMENT === "development") {
         "https://portfolio-duc-app-39771e993c9d.herokuapp.com",
         "https://www.ducduong.dev/",
         "https://ducduong.dev/",
+        "https://neniuk.dev",
+        "https://www.neniuk.dev",
+        "https://portfolio-website-45f1e0d390b7.herokuapp.com",
     ];
 } else {
     throw new Error("Invalid environment");
