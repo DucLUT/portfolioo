@@ -23,7 +23,7 @@ if (ENVIRONMENT === "development") {
     ALLOWED_ORIGINS = [
         "https://portfolio-duc-app-39771e993c9d.herokuapp.com",
         "https://www.ducduong.dev/",
-        "https://ducduong.dev/"
+        "https://ducduong.dev/",
     ];
 } else {
     throw new Error("Invalid environment");
@@ -70,7 +70,7 @@ const io = new Server(server, {
         credentials: true,
     },
 });
-q
+
 const connectedUsers = new Map();
 const connectedUsernames = new Set();
 let currentConnections = 0;
