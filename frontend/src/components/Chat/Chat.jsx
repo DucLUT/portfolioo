@@ -14,7 +14,7 @@ const Chat = () => {
 
     // Initialize socket connection
     useEffect(() => {
-        const newSocket = io("http://localhost:3000"); // Replace with your backend URL
+        const newSocket = io("https://www.ducduong.dev"); // Replace with your backend URL
         setSocket(newSocket);
 
         // Connection events
