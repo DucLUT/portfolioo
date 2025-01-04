@@ -18,6 +18,11 @@ if (ENVIRONMENT === "development") {
         "http://localhost:5000",
         "http://localhost:5173",
     ];
+} else if (ENVIRONMENT === "production") {
+    console.log("Running in production mode");
+    ALLOWED_ORIGINS = [
+        "https://portfolio-duc-app-39771e993c9d.herokuapp.com",
+    ];
 } else {
     throw new Error("Invalid environment");
 }
@@ -34,7 +39,7 @@ if (ENVIRONMENT === "development") {
     throw new Error("Invalid environment");
 }
 
-const clientPath = path.join(__dirname, "../frontend");
+const clientPath = path.join(__dirname, "./dist/frontend");
 app.use(express.static(clientPath));
 app.get("*", (_req, res ,next) => {
     res.sendFile(path.join(clientPath, "index.html"));
