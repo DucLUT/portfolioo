@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "install": "cd client && npm install --include=dev && cd ../server && npm install --include=dev",
-    "build": "cd client && npm run build:to:server && cd ../server && npm run build",
-    "start": "cd server && npm start",
+    "install": "cd frontend && npm install --include=dev && cd ../backend && npm install --include=dev",
+    "build": "cd frontend && npm run build:to:backend",
+    "start": "cd backend && npm start",
     "dev": "concurrently \"npm run dev:fe\" \"npm run dev:be\"",
     "dev:fe": "cd frontend && npm run dev",
     "dev:be": "cd backend && npm run dev",

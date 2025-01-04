@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "build:to:backend": "vite build --outDir=../backend/dist/frontend --emptyOutDir",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

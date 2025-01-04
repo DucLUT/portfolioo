@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path');
 const { Server } = require('socket.io');
 dotenv.config();
 const cors = require('cors');
@@ -24,6 +25,20 @@ if (ENVIRONMENT === "development") {
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+if (ENVIRONMENT === "development") {
+    console.log("Serving static files in development mode");
+} else if (ENVIRONMENT === "production") {
+    console.log("Serving static files in production mode");
+} else {
+    throw new Error("Invalid environment");
+}
+
+const clientPath = path.join(__dirname, "./dist/frontend");
+app.use(express.static(clientPath));
+app.get("*", (_req, res ,next) => {
+    res.sendFile(path.join(clientPath, "index.html"));
+});
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
