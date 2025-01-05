@@ -14,7 +14,7 @@ const Chat = () => {
 
     // Initialize socket connection
     useEffect(() => {
-        const newSocket = io("https://www.neniuk.dev", withCredentials: true); // Replace with your backend URL
+        const newSocket = io("https://www.neniuk.dev/",{transports:["websocket"]}); // Replace with your backend URL
         setSocket(newSocket);
 
         // Connection events
