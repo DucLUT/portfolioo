@@ -76,6 +76,8 @@ const io = new Server(server, {
 
 const connectedUsers = new Map();
 const connectedUsernames = new Set();
+const availablePlayers = new Map(); // Tracks players available for matchmaking
+const activeMatches = new Map(); // Tracks active matche
 let currentConnections = 0;
 
 const validChatMessage = (msg) => {
@@ -171,8 +173,8 @@ const resetBall = () => {
     gameState.ball = {
         x: canvasWidth / 2,
         y: canvasHeight / 2,
-        speedX: Math.random() > 0.5 ? 3 : -3,
-        speedY: Math.random() > 0.5 ? 3 : -3,
+        speedX: Math.random() > 0.5 ? 7 : -7,
+        speedY: Math.random() > 0.5 ? 7 : -7,
         size: 10,
     };
 };
@@ -224,28 +226,110 @@ const updateGame = () => {
 // Update the game state at 60 FPS
 setInterval(updateGame, 1000 / 60);
 
-gameNamespace.on("connection", (socket) => {
-    console.log("A user connected to the game!");
+const broadcastPlayers = () => {
+    gameNamespace.emit(
+        "updatePlayers",
+        Array.from(availablePlayers.entries()).map(([id, name]) => ({ id, name }))
+    );
+}
 
-    // Send initial state
+const handleGameConnect = (socket) => {
+    const userName = generateUniqueName();
+    availablePlayers.set(socket.id, userName);
+    broadcastPlayers();
+    
+}
+const sendInvite = (socket, opponentId) => {
+    const inviterName = availablePlayers.get(socket.id);
+    console.log("this shiet work?: "+ inviterName)
+    console.log("this shiet aint work"+ opponentId)
+    if (inviterName) {
+        gameNamespace.to(opponentId).emit("receiveInvite", {
+            inviterId: socket.id,
+            inviterName,
+        });
+    }
+};
+const respondInvite = (socket, { inviterId, accepted }) => {
+    console.log(`Received response to invite from ${socket.id} to ${inviterId}: ${accepted}`);
+    if (accepted) {
+        const opponentName = availablePlayers.get(socket.id);
+        availablePlayers.delete(socket.id);
+        availablePlayers.delete(inviterId);
+        broadcastPlayers();
+        activeMatches.set(socket.id, inviterId);
+        activeMatches.set(inviterId, socket.id);
+        gameNamespace.to(socket.id).emit("startGame", { role: "right", opponentName });
+        gameNamespace.to(inviterId).emit("startGame", { role: "left", opponentName: opponentName });
+    } else {
+        gameNamespace.to(inviterId).emit("inviteDeclined");
+    }
+};
+const handleGameDisconnect = (socket) => {
+    availablePlayers.delete(socket.id);
+    const opponentId = activeMatches.get(socket.id)
+    if(opponentId){
+        gameNamespace.to(opponentId).emit("opponentDisconnected");
+        activeMatches.delete(opponentId);
+    }
+    activeMatches.delete(socket.id)
+    broadcastPlayers();
+}
+const handleController = ({ paddle, direction }) => {
+    if (paddle === "left") {
+        gameState.leftPaddleY = Math.max(
+            Math.min(gameState.leftPaddleY + direction * 10, canvasHeight - 100),
+            0
+        );
+    } else if (paddle === "right") {
+        gameState.rightPaddleY = Math.max(
+            Math.min(gameState.rightPaddleY + direction * 10, canvasHeight - 100),
+            0
+        );
+    }
+}
+
+gameNamespace.on("connection", (socket) => {
+    handleGameConnect(socket);
     socket.emit("gameState", gameState);
 
-    // Handle paddle movement
-    socket.on("paddleMove", ({ paddle, direction }) => {
-        if (paddle === "left") {
-            gameState.leftPaddleY = Math.max(
-                Math.min(gameState.leftPaddleY + direction * 10, canvasHeight - 100),
-                0
-            );
-        } else if (paddle === "right") {
-            gameState.rightPaddleY = Math.max(
-                Math.min(gameState.rightPaddleY + direction * 10, canvasHeight - 100),
-                0
-            );
-        }
+    socket.on("handleController", ({ paddle, direction }) => {
+        handleController({ paddle, direction });
     });
 
+    socket.on("sendInvite", (opponentId) => sendInvite(socket, opponentId));
+
+    socket.on("respondInvite", (data) => respondInvite(socket, data));
+
     socket.on("disconnect", () => {
-        console.log("A user disconnected from the game!");
+        handleGameDisconnect(socket);
     });
 });
+
+// gameNamespace.on("connection", (socket) => {
+//     console.log("A user connected to the game!");
+    
+
+//     // Send initial state
+//     socket.emit("gameState", gameState);
+
+
+//     // Handle paddle movement
+//     socket.on("paddleMove", ({ paddle, direction }) => {
+//         if (paddle === "left") {
+//             gameState.leftPaddleY = Math.max(
+//                 Math.min(gameState.leftPaddleY + direction * 10, canvasHeight - 100),
+//                 0
+//             );
+//         } else if (paddle === "right") {
+//             gameState.rightPaddleY = Math.max(
+//                 Math.min(gameState.rightPaddleY + direction * 10, canvasHeight - 100),
+//                 0
+//             );
+//         }
+//     });
+
+//     socket.on("disconnect", () => {
+//         console.log("A user disconnected from the game!");
+//     });
+// });

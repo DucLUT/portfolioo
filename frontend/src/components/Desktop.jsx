@@ -8,7 +8,7 @@ import ubuntuLogo from "../assets/ubuntu-logo.png"
 import Project from './Project'
 import aboutMeIcon from "../assets/duc-portrait.png"
 import Chat from "./Chat/Chat"
-import Game from "./Game/OfflineGame"
+import Game from "./Game/Game"
 
 
 const Desktop = () => {

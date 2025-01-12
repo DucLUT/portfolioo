@@ -54,6 +54,23 @@ const OnlineGame = () => {
             ctx.fill();
         };
 
+        const draw = (ctx) =>{
+            const { ball, leftPaddleY, rightPaddleY, leftScore, rightScore } = gameState;
+            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+            ctx.fillStyle = "white";
+            ctx.fillRect(10, leftPaddleY, 10, 100); // Left paddle
+            ctx.fillRect(canvasRef.current.width - 20, rightPaddleY, 10, 100); // Right paddle
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+            ctx.fill();
+
+        };
+        const update = () => {
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext("2d")
+            const {x,y,speedX, speedY, size} = ball.current
+        }
+
         const gameLoop = () => {
             drawGame();
             requestAnimationFrame(gameLoop);
