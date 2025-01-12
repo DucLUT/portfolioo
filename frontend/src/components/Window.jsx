@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Rnd } from "react-rnd";
 import { XMarkIcon, ArrowsPointingOutIcon, ArrowsPointingInIcon } from "@heroicons/react/24/solid";
 
-const Window = ({ title, content, x, y, onClose }) => {
+const Window = ({ title, content, x, y, onClose, scrollable = true }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [size, setSize] = useState({ width: 500, height: 400 });
   const [position, setPosition] = useState({ x, y });
@@ -41,8 +41,8 @@ const Window = ({ title, content, x, y, onClose }) => {
     <Rnd
       size={size}
       position={position}
-      minWidth={300}
-      minHeight={200}
+      minWidth={400}
+      minHeight={450}
       onDragStop={(e, d) => {
         if (!isFullScreen) {
           const newPosition = { x: d.x, y: d.y };

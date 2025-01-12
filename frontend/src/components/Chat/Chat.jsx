@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+import ChatHeader from './ChatHeader';
+import ChatBody from './ChatBody';
 
-// Components
-import ChatHeader from "./ChatHeader";
-import ChatBody from "./ChatBody";
-
-// Main Chat Component
 const Chat = () => {
     const [socket, setSocket] = useState(null);
     const [messages, setMessages] = useState([]); // Chat messages
@@ -14,13 +11,16 @@ const Chat = () => {
 
     // Initialize socket connection
     useEffect(() => {
-        const newSocket = io("https://www.neniuk.dev/",{transports:["websocket"]}); // Replace with your backend URL
+        const newSocket = io("http://localhost:3000/chat", { transports: ["websocket"] });
         setSocket(newSocket);
 
         // Connection events
         newSocket.on("connect", () => setIsConnected(true));
         newSocket.on("disconnect", () => setIsConnected(false));
-        newSocket.on("users", (count) => setConnectedUsers(count));
+        newSocket.on("users", (count) => {
+            console.log(`Connected users: ${count}`);
+            setConnectedUsers(count);
+        }); // Listen for "users" event
 
         // Listen for incoming messages
         newSocket.on("chat", (message) => {
