@@ -7,7 +7,7 @@ const Lobby = ({ onStartGame }) => {
     const [receivedInvite, setReceivedInvite] = useState(null);
 
     useEffect(() => {
-        const newSocket = io("http://localhost:3000/game", { transports: ["websocket"] });
+        const newSocket = io("https://portfolio-duc-app-39771e993c9d.herokuapp.com/game", { transports: ["websocket"] });
         setSocket(newSocket);
 
         // Listen for updates to the player list
