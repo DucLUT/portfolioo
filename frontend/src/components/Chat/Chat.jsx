@@ -11,7 +11,7 @@ const Chat = () => {
 
     // Initialize socket connection
     useEffect(() => {
-        const newSocket = io("http://localhost:3000/chat", { transports: ["websocket"] });
+        const newSocket = io("https://www.ducduong.dev/", { transports: ["websocket"] });
         setSocket(newSocket);
 
         // Connection events
