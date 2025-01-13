@@ -11,7 +11,7 @@ const Chat = () => {
 
     // Initialize socket connection
     useEffect(() => {
-        const newSocket = io("https://www.ducduong.dev/chat", { transports: ["websocket"] });
+        const newSocket = io("https://portfolio-duc-app-39771e993c9d.herokuapp.com/chat", { transports: ["websocket"] });
         setSocket(newSocket);
 
         // Connection events
