@@ -22,3 +22,28 @@ This project is about my portfolio which mimics the interface of Ubuntu and has 
    git clone https://github.com/yourusername/portfolio.git
    cd portfolio
    ```
+2. **Install dependencies**:
+   ```sh
+   npm install
+   ```
+3. **Running the Development mode both front-end and back-end at the same time**:
+   from root:
+   ```sh
+   cd frontend
+   npm i
+   npm run dev
+   ```
+   from root:
+   ```sh
+   cd backend
+   npm i
+   npm run dev
+   ```
+4. **Running the Production mode**:
+   from root:
+   ```sh
+   npm run install
+   npm run build
+   npm start
+   ```
+   
