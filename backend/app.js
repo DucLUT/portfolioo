@@ -186,9 +186,13 @@ const updateGame = () => {
     ball.x += ball.speedX;
     ball.y += ball.speedY;
 
-    // Collision with walls
-    if (ball.y - ball.size < 0 || ball.y + ball.size > canvasHeight) {
+    // Collision with walls (top and bottom)
+    if (ball.y - ball.size < 0) {
         ball.speedY *= -1;
+        ball.y = ball.size;
+    }else if (ball.y+ball.size>canvasHeight){
+        ball.speedY*=-1;
+        ball.y=canvasHeight-ball.size;
     }
 
     // Collision with paddles
@@ -198,14 +202,14 @@ const updateGame = () => {
         ball.y < leftPaddleY + 100
     ) {
         ball.speedX *= -1;
-    }
-
-    if (
-        ball.x + ball.size > canvasWidth - 20 &&
-        ball.y > rightPaddleY &&
-        ball.y < rightPaddleY + 100
+        ball.x=20+ball.size;
+    }else if (
+        ball.x+ball.size > 380 &&
+        ball.y>rightPaddleY &&
+        ball.y< rightPaddleY + 100
     ) {
-        ball.speedX *= -1;
+        ball.speedX *=-1;
+        ball.x=380-ball.size;
     }
 
     // Scoring
@@ -275,7 +279,7 @@ const handleGameDisconnect = (socket) => {
     activeMatches.delete(socket.id)
     broadcastPlayers();
 }
-const handleController = ({ paddle, direction }) => {
+const handleController = (socket, { paddle, direction }) => {
     if (paddle === "left") {
         gameState.leftPaddleY = Math.max(
             Math.min(gameState.leftPaddleY + direction * 10, canvasHeight - 100),
@@ -287,14 +291,15 @@ const handleController = ({ paddle, direction }) => {
             0
         );
     }
-}
+    gameNamespace.emit("gameState", gameState);
+};
 
 gameNamespace.on("connection", (socket) => {
     handleGameConnect(socket);
     socket.emit("gameState", gameState);
 
-    socket.on("handleController", ({ paddle, direction }) => {
-        handleController({ paddle, direction });
+    socket.on("handleController", (data) => {
+        handleController(socket, data);
     });
 
     socket.on("sendInvite", (opponentId) => sendInvite(socket, opponentId));

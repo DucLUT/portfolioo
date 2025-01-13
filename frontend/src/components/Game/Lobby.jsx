@@ -28,7 +28,7 @@ const Lobby = ({ onStartGame }) => {
         });
 
         return () => newSocket.close();
-    }, []);
+    }, [onStartGame]);
 
     const sendInvite = (opponentId) => {
         if (socket) {
@@ -42,7 +42,7 @@ const Lobby = ({ onStartGame }) => {
             console.log(`Responding to invite from ${receivedInvite.inviterId} with ${accepted}`);
             socket.emit("respondInvite", { inviterId: receivedInvite.inviterId, accepted });
             if (accepted) {
-                onStartGame(); // Start the game
+                onStartGame("right", receivedInvite.inviterName); // Start the game with role and opponentName
             }
             setReceivedInvite(null);
         }

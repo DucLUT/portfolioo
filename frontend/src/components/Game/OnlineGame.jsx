@@ -1,96 +1,85 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { io } from "socket.io-client";
+import throttle from "lodash.throttle";
 
-const OnlineGame = () => {
+const OnlineGame = ({ role, opponentName }) => {
     const canvasRef = useRef(null);
-    const [gameState, setGameState] = useState({
-        ball: { x: 200, y: 150, speedX: 10, speedY: 10, size: 6 },
+    const requestRef = useRef();
+    const gameStateRef = useRef({
+        ball: { x: 200, y: 150, speedX: 7, speedY: 7, size: 6 },
         leftPaddleY: 100,
         rightPaddleY: 100,
         leftScore: 0,
         rightScore: 0,
     });
-    const socket = useRef(null);
+
+    const [gameState, setGameState] = useState(gameStateRef.current);
+    const [socket, setSocket] = useState(null);
+
     useEffect(() => {
-        socket.current= io("http://localhost:3000/game", { transports: ["websocket"] });
-        socket.current.on("gameState", (state) => {
+        const newSocket = io("http://localhost:3000/game", { transports: ["websocket"] });
+        setSocket(newSocket);
+        newSocket.on("gameState", (state) => {
+            gameStateRef.current = state;
             setGameState(state);
         });
 
-        const handleKeyDown = (event) => {
+        const handleKeyDown = throttle((event) => {
             if (event.key === "ArrowUp") {
-                socket.current.emit("paddleMove", { paddle: "right", direction: -1 });
+                newSocket.emit("handleController", { paddle: role, direction: -1 });
             } else if (event.key === "ArrowDown") {
-                socket.current.emit("paddleMove", { paddle: "right", direction: 1 });
-            } else if (event.key === "w") {
-                socket.current.emit("paddleMove", { paddle: "left", direction: -1 });
-            } else if (event.key === "s") {
-                socket.current.emit("paddleMove", { paddle: "left", direction: 1 });
+                newSocket.emit("handleController", { paddle: role, direction: 1 });
             }
-        };
+        }, 100); // Throttle to limit the frequency of keydown events
 
         document.addEventListener("keydown", handleKeyDown);
         return () => {
+            newSocket.close();
             document.removeEventListener("keydown", handleKeyDown);
-            socket.current.disconnect();
         };
+    }, [role]);
+
+    const drawGame = useCallback(() => {
+        const ctx = canvasRef.current.getContext("2d");
+        const { ball, leftPaddleY, rightPaddleY, leftScore, rightScore } = gameStateRef.current;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+
+        // Draw paddles
+        ctx.fillStyle = "white";
+        ctx.fillRect(10, leftPaddleY, 10, 100); // Left paddle
+        ctx.fillRect(380, rightPaddleY, 10, 100); // Right paddle
+
+        // Draw ball
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+        ctx.fill();
     }, []);
-        // Draw the game state on canvas
-        const drawGame = () => {
-            const ctx = canvasRef.current.getContext("2d");
-            const { ball, leftPaddleY, rightPaddleY, leftScore, rightScore } = gameState;
-    
-            // Clear canvas
-            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    
-            // Draw paddles
-            ctx.fillStyle = "white";
-            ctx.fillRect(10, leftPaddleY, 10, 100); // Left paddle
-            ctx.fillRect(canvasRef.current.width - 20, rightPaddleY, 10, 100); // Right paddle
-    
-            // Draw ball
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-            ctx.fill();
-        };
 
-        const draw = (ctx) =>{
-            const { ball, leftPaddleY, rightPaddleY, leftScore, rightScore } = gameState;
-            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-            ctx.fillStyle = "white";
-            ctx.fillRect(10, leftPaddleY, 10, 100); // Left paddle
-            ctx.fillRect(canvasRef.current.width - 20, rightPaddleY, 10, 100); // Right paddle
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-            ctx.fill();
+    const gameLoop = useCallback(() => {
+        drawGame();
+        requestRef.current = requestAnimationFrame(gameLoop);
+    }, [drawGame]);
 
-        };
-        const update = () => {
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext("2d")
-            const {x,y,speedX, speedY, size} = ball.current
-        }
+    useEffect(() => {
+        // Start the game loop when component is mounted
+        requestRef.current = requestAnimationFrame(gameLoop);
+        return () => cancelAnimationFrame(requestRef.current);
+    }, [gameLoop]);
 
-        const gameLoop = () => {
-            drawGame();
-            requestAnimationFrame(gameLoop);
-        };
-    
-        useEffect(() => {
-            // Start the game loop when component is mounted
-            gameLoop();
-        }, [gameState]); // Re-run the game loop when gameState changes
-    
-        return (
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
-                <canvas
-                    ref={canvasRef}
-                    width={400}
-                    height={300}
-                    style={{ border: "1px solid white" }}
-                ></canvas>
-            </div>
-        );
+    return (
+        <div className="flex flex-col items-center justify-center h-full w-full bg-gray-900 text-white">
+            <canvas
+                ref={canvasRef}
+                width={400}
+                height={300}
+                className="border border-gray-700"
+            ></canvas>
+            <p>Playing as: {role}</p>
+            <p>Opponent: {opponentName}</p>
+        </div>
+    );
 };
 
 export default OnlineGame;
