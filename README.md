@@ -19,7 +19,7 @@ This project is about my portfolio which mimics the interface of Ubuntu and has 
 
 1. **Clone the repository**:
    ```sh
-   git clone https://github.com/yourusername/portfolio.git
+   git clone https://github.com/yourusername/portfolio.git](https://github.com/DucLUT/portfolioo.git
    cd portfolio
    ```
 2. **Install dependencies**:
