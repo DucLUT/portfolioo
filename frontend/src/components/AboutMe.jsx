@@ -13,7 +13,7 @@ const Profile = () => {
     return (
     <div className="w-24 h-24 border-2 border-blue-500 rounded-lg overflow-hidden">
         <img
-            src = {profilePicture} // Replace with your avatar image path
+            src = {profilePicture} 
             alt="Profile"
             className="w-full h-full object-cover"
         />
@@ -32,8 +32,8 @@ const ProfileSummary = () => {
             Finland
         </p>
         <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-            Hi, I'm a final-year bachelor's student in software engineering. If you have
-            any questions, feel free to contact me via email or LinkedIn.
+            Hi, I'm Duong Minh Duc, third year student at LUT University majoring in Software and System Engineering. If 
+            yoy have any questions, feel free to contact me via email or LinkedIn.
         </p>
         </div>
     )
