@@ -24,9 +24,6 @@ if (ENVIRONMENT === "development") {
         "https://portfolio-duc-app-39771e993c9d.herokuapp.com",
         "https://www.ducduong.dev/",
         "https://ducduong.dev/",
-        "https://neniuk.dev",
-        "https://www.neniuk.dev",
-        "https://portfolio-website-45f1e0d390b7.herokuapp.com",
     ];
 } else {
     throw new Error("Invalid environment");
@@ -245,8 +242,8 @@ const handleGameConnect = (socket) => {
 }
 const sendInvite = (socket, opponentId) => {
     const inviterName = availablePlayers.get(socket.id);
-    console.log("this shiet work?: "+ inviterName)
-    console.log("this shiet aint work"+ opponentId)
+    // console.log("Inviter Name: "+ inviterName)
+    // console.log("Opponent Name: "+ opponentId)
     if (inviterName) {
         gameNamespace.to(opponentId).emit("receiveInvite", {
             inviterId: socket.id,
