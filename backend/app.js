@@ -172,7 +172,7 @@ const resetBall = () => {
         y: canvasHeight / 2,
         speedX: Math.random() > 0.5 ? 7 : -7,
         speedY: Math.random() > 0.5 ? 7 : -7,
-        size: 10,
+        size: 6,
     };
 };
 
@@ -244,6 +244,10 @@ const sendInvite = (socket, opponentId) => {
     const inviterName = availablePlayers.get(socket.id);
     // console.log("Inviter Name: "+ inviterName)
     // console.log("Opponent Name: "+ opponentId)
+    if (inviterId === opponentId) {
+        console.log("Cannot send invite to yourself.");
+        return;
+    }
     if (inviterName) {
         gameNamespace.to(opponentId).emit("receiveInvite", {
             inviterId: socket.id,
@@ -275,7 +279,7 @@ const handleGameDisconnect = (socket) => {
     }
     activeMatches.delete(socket.id)
     broadcastPlayers();
-}
+};
 const handleController = (socket, { paddle, direction }) => {
     if (paddle === "left") {
         gameState.leftPaddleY = Math.max(

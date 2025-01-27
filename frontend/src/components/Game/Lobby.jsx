@@ -31,7 +31,14 @@ const Lobby = ({ onStartGame }) => {
     }, [onStartGame]);
 
     const sendInvite = (opponentId) => {
+        console.log("my socket id: " + socket.id);
         if (socket) {
+            if (socket.id === opponentId) {
+                console.log("me  "+ socket.id);
+                console.log("Cannot send invite to yourself.");
+                alert("Cannot send invite to yourself.");
+                return;
+            }
             console.log(`Sending invite to ${opponentId}`);
             socket.emit("sendInvite", opponentId);
         }
