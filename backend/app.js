@@ -244,10 +244,6 @@ const sendInvite = (socket, opponentId) => {
     const inviterName = availablePlayers.get(socket.id);
     // console.log("Inviter Name: "+ inviterName)
     // console.log("Opponent Name: "+ opponentId)
-    if (inviterId === opponentId) {
-        console.log("Cannot send invite to yourself.");
-        return;
-    }
     if (inviterName) {
         gameNamespace.to(opponentId).emit("receiveInvite", {
             inviterId: socket.id,
