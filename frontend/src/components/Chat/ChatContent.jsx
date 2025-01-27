@@ -21,7 +21,7 @@ const ChatContent = ({ messages }) => {
                     <span className={`${getMessageStyle(msg.sender)}`}>
                         {msg.sender} {"> "}
                     </span>
-                    <span className="text-white">{msg.messages}</span>
+                    <span className="text-white">{msg.message}</span>
                 </div>
             ))}
         </div>
