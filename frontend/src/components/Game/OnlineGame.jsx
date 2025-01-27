@@ -19,7 +19,7 @@ const OnlineGame = ({ role, opponentName }) => {
     useEffect(() => {
         //localhost:3000/game
         //https://portfolio-duc-app-39771e993c9d.herokuapp.com/game
-        const newSocket = io("localhost:3000/game", { transports: ["websocket"] });
+        const newSocket = io("ttps://portfolio-duc-app-39771e993c9d.herokuapp.com/game", { transports: ["websocket"] });
         setSocket(newSocket);
         newSocket.on("gameState", (state) => {
             gameStateRef.current = state;
